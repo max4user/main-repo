@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html>
-
 <head>
+   <meta charset="UTF-8">
    <title>Leaflet Nested Clusters - Івано-Франківськ</title>
    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
    <style>
+      *{
+         margin: 0;
+         padding:0;
+      }
       #map {
-         height: 600px;
+         height: 100vh;
       }
    </style>
 </head>
@@ -39,7 +43,7 @@
             },
             {
                name: "Підпечери",
-               latlng: [48.8925, 24.6850],
+               latlng: [48.93005363315395, 24.804244921081807],
                children: [
                   { name: "вулиця Івана Франка", latlng: [48.93099959820205, 24.801657314413752], description: "вулиця Івана Франка" },
                   { name: "вулиця Сагайдачного", latlng: [48.92726423916886, 24.796845365131826], description: "вулиця Сагайдачного" },
@@ -55,6 +59,23 @@
                   { name: "Галицька вулиця Наддністрянська", latlng: [49.12682741340684, 24.719169115194088], description: "Галицька вулиця Наддністрянська" }
                ]
             }
+         ]
+      };
+
+      const lvivData = {
+         name: "Львів",
+         latlng: [49.847313074486976, 24.172389489851643], 
+         children: [
+            {
+               name: "Дрогобич",
+               latlng: [49.35799969710783, 23.512510991068346],
+               children: [
+                  { name: "вулиця 22-го Січня", latlng: [49.366027993085986, 23.51093512459537], description: "" },
+                  { name: "вулиця Тиха", latlng: [49.35082219459137, 23.49042158969858], description: "" },
+                  { name: "вулиця Гайдамацька", latlng: [49.362411262410774, 23.543446517714745], description: "" }
+               ]
+            },
+             
          ]
       };
  
@@ -115,6 +136,7 @@
       }
  
       addNestedMarkers(ivanoFrankivskData, markers);
+      addNestedMarkers(lvivData, markers);
       map.addLayer(markers);
    </script>
 </body>
