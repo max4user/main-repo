@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <title>Leaflet Nested Clusters - Івано-Франківськ</title>
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+   <style>
+      #map {
+         height: 600px;
+      }
+   </style>
+</head>
+
+<body>
+   <div id="map"></div>
+
+   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+   <script>
+ 
+      const map = L.map('map').setView([48.9226, 24.7111], 11);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+         attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+ 
+      const ivanoFrankivskData = {
+         name: "Івано-Франківськ",
+         latlng: [48.9226, 24.7111], 
+         children: [
+            {
+               name: "Угринів",
+               latlng: [48.9568, 24.6938],
+               children: [
+                  { name: "Центр Угринова", latlng: [48.9568, 24.6938], description: "Сільська рада" },
+                  { name: "Школа Угринова", latlng: [48.9575, 24.6950], description: "Місцева школа" },
+                  { name: "Магазин Угринова", latlng: [48.9550, 24.6920], description: "Продуктовий магазин" }
+               ]
+            },
+            {
+               name: "Підпечери",
+               latlng: [48.8925, 24.6850],
+               children: [
+                  { name: "вулиця Івана Франка", latlng: [48.93099959820205, 24.801657314413752], description: "вулиця Івана Франка" },
+                  { name: "вулиця Сагайдачного", latlng: [48.92726423916886, 24.796845365131826], description: "вулиця Сагайдачного" },
+                  { name: "вулиця Зелена", latlng: [48.93414197603821, 24.80170027821309], description: "вулиця Зелена" }
+               ]
+            },
+            {
+               name: "Галич",
+               latlng: [49.12374780578206, 24.731235076552917],
+               children: [
+                  { name: "Галицька центральна лікарня", latlng: [49.12009922485405, 24.73776900101069], description: "Галицька центральна лікарня" },
+                  { name: "Галицька пожарна станція", latlng: [49.123047299062634, 24.74127011411595], description: "Галицька пожарна станція" },
+                  { name: "Галицька вулиця Наддністрянська", latlng: [49.12682741340684, 24.719169115194088], description: "Галицька вулиця Наддністрянська" }
+               ]
+            }
+         ]
+      };
+ 
+      const markers = L.markerClusterGroup({
+         maxClusterRadius: 80,
+         iconCreateFunction: function (cluster) {
+            const childCount = cluster.getChildCount();
+            return L.divIcon({
+               html: `<div style="background: #4682b4; color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">${childCount}</div>`,
+               className: 'marker-cluster-custom',
+               iconSize: L.point(30, 30)
+            });
+         }
+      });
+
+ 
+      function addNestedMarkers(data, parentGroup, level = 1) {
+         const marker = L.marker(data.latlng, {
+            title: data.name
+         }).bindPopup(`
+                <b>${data.name}</b><br>
+                ${data.description ? data.description + '<br>' : ''}
+                Координати: ${data.latlng.join(', ')}
+                ${data.children && data.children.length ? '<br>Дочірніх об\'єктів: ' + data.children.length : ''}
+            `);
+
+         parentGroup.addLayer(marker);
+
+ 
+         if (data.children && data.children.length > 0) {
+            const childGroup = L.featureGroup();
+            data.children.forEach(child => {
+               addNestedMarkers(child, childGroup, level + 1);
+            });
+ 
+            parentGroup.addLayer(childGroup);
+
+ 
+            marker.on('click', (e) => {
+               e.originalEvent.stopPropagation(); 
+               if (map.hasLayer(childGroup)) {
+                  map.removeLayer(childGroup);
+                  marker.setIcon(L.icon({
+                     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+                     iconSize: [25, 41],
+                     iconAnchor: [12, 41]
+                  }));
+               } else {
+                  map.addLayer(childGroup);
+                  marker.setIcon(L.icon({
+                     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+                     iconSize: [25, 41],
+                     iconAnchor: [12, 41]
+                  }));
+               }
+            });
+         }
+      }
+ 
+      addNestedMarkers(ivanoFrankivskData, markers);
+      map.addLayer(markers);
+   </script>
+</body>
+
+</html>
