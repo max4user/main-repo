@@ -114,24 +114,7 @@
             parentGroup.addLayer(childGroup);
 
  
-            marker.on('click', (e) => {
-               e.originalEvent.stopPropagation(); 
-               if (map.hasLayer(childGroup)) {
-                  map.removeLayer(childGroup);
-                  marker.setIcon(L.icon({
-                     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-                     iconSize: [25, 41],
-                     iconAnchor: [12, 41]
-                  }));
-               } else {
-                  map.addLayer(childGroup);
-                  marker.setIcon(L.icon({
-                     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-                     iconSize: [25, 41],
-                     iconAnchor: [12, 41]
-                  }));
-               }
-            });
+          
          }
       }
  
